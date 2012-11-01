@@ -4,6 +4,8 @@ This is an object-oriented PHP implementation of the game Minesweeper. I made
 this to practice test-driven development. So this minesweeper implementation is 
 fully unit tested.
 
+Because of its OOP nature, it's easy to add custom squares instead of mines.
+
 I hope anyone finds it useful.
 
 ![PHP-Minesweeper screenshot](https://raw.github.com/mauserrifle/php-minesweeper/master/screenshot.png "PHP-Minesweeper screenshot")
