@@ -312,7 +312,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 			$grid->addSquare(new Minesweeper\Square\MineSquare);
 		}
 
-		$this->assertSame(19, $grid->numberOfSquares('Minesweeper\Square\MineSquare', FALSE));
+		$this->assertSame(19, $grid->numberOfSquares('Minesweeper\Square\MineSquare'));
 	}
 
 	/**
