@@ -65,10 +65,19 @@ h1 {
 	background-position: center;
 }
 
-.minesweeper-square.flag {
+.minesweeper-square.flag div.minesweeper-flag{
+	display: block;
+	width: 100%;
+	height: 100%;
 	background-image: url("../img/flag.png");
 	background-repeat: no-repeat;
 	background-position: center;
+}
+
+
+.minesweeper-square.flag.wrong-flag div.minesweeper-flag{
+	background-image: url("../img/wrong.png"),url("../img/flag.png");
+
 }
 
 .minesweeper-number1 {

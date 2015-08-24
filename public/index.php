@@ -122,11 +122,17 @@ foreach ($row as $column_key => $square)
 		'row'         => $row_key,
 		'column'      => $column_key,
 
-		'is_flagged'  => $square->isFlagged(),
+		'is_flagged'  => $square->isFlagged() OR
+			($grid->isGameOver() AND $square->isGameOver() and $grid->isWonByPlayer()),
+
+		'is_non_game_over_flagged'
+		              => $grid->isGameOver() AND $square->isFlagged() AND !$square->isGameOver(),
 
 		// Square revealed. Game over squares are always revealed at the end
 		'is_revealed' => $square->isRevealed() OR
-			             ($grid->isGameOver() AND $square->isGameOver()),
+			($grid->isGameOver() AND $square->isGameOver()
+				AND ! $grid->isWonByPlayer() AND ! $square->isFlagged()),
+
 		'is_revealed_gameover'
 		              => $square->isRevealed() AND $square->isGameOver(),
 		'name'        => (string) $square,
