@@ -68,16 +68,34 @@ if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		// Create position array
 		$reveal_position = explode(',', $square);
 
-		// Reveal
-		try
-		{
-			$grid->reveal($reveal_position);
+		if (isset($reveal_position[0]) && isset($reveal_position[1])){
+
+			$x = filter_var($reveal_position[0],FILTER_SANITIZE_NUMBER_INT);
+			$y = filter_var($reveal_position[1],FILTER_SANITIZE_NUMBER_INT);
+
+			// Reveal
+			try
+			{
+				$grid->reveal(array($x,$y));
+			}
+			// Ignore gameover and alreadyrevealed exceptions.
+			// Gameover is already checked above
+			catch ( Exception $ex) {};
+
 		}
-		// Ignore gameover and alreadyrevealed exceptions.
-		// Gameover is already checked above
-		catch ( Exception $ex) {};
+
+
 
 	}
+
+	if ($flag = Arr::get($_POST, 'flag') AND ! $grid->isGameOver()){
+
+		$flag_position = explode(',', $flag);
+
+		$grid->toggleFlag($flag_position);
+	}
+
+
 }
 
 
@@ -104,6 +122,8 @@ foreach ($row as $column_key => $square)
 		'row'         => $row_key,
 		'column'      => $column_key,
 
+		'is_flagged'  => $square->isFlagged(),
+
 		// Square revealed. Game over squares are always revealed at the end
 		'is_revealed' => $square->isRevealed() OR
 			             ($grid->isGameOver() AND $square->isGameOver()),
@@ -119,7 +139,8 @@ foreach ($row as $column_key => $square)
 			                  NULL,
 
 		// Make square disabled when revealed or the game is over
-		'is_disabled' => $square->isRevealed() OR $grid->isGameOver()
+		'is_disabled' => $square->isFlagged() OR $square->isRevealed()
+							OR $grid->isGameOver()
 	);
 
 	// Store square data

@@ -20,11 +20,7 @@ class Minesweeper {
 			$mines = 10;
 		}
 
-		$grid = new Grid($rows, $columns);
-		for($i=0; $i < $mines; $i++)
-		{
-			$grid->addSquare(new Square\MineSquare());
-		}
+		$grid = new Grid($rows, $columns, $mines);
 
 		return $grid;
 	}

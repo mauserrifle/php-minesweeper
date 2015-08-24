@@ -63,7 +63,13 @@ h1 {
 	background-image: url("../img/mine.png");
 	background-repeat: no-repeat;
 	background-position: center;
-}    	
+}
+
+.minesweeper-square.flag {
+	background-image: url("../img/flag.png");
+	background-repeat: no-repeat;
+	background-position: center;
+}
 
 .minesweeper-number1 {
 	color: #0000ff;
