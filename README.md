@@ -1,7 +1,7 @@
 # PHP-Minesweeper
 
-This is an object-oriented PHP implementation of the game Minesweeper. I made 
-this to practice test-driven development. So this minesweeper implementation is 
+This is an object-oriented PHP implementation of the game Minesweeper. It was made
+to practice test-driven development. So this minesweeper implementation is
 fully unit tested.
 
 Because of its OOP nature, it's easy to add custom squares instead of mines.
@@ -18,7 +18,7 @@ I hope anyone finds it useful.
 
 Download the files or clone this project.
 
-    git clone https://github.com/mauserrifle/php-minesweeper.git
+    git clone https://github.com/emiliopedrollo/php-minesweeper.git
 
 Get all dependencies through composer:
 
@@ -48,4 +48,4 @@ Open <http://localhost:8000> in your browser.
 
 ## Demo
 
-I hope to put it online as a demo soon.
+There will be no demo from me
