@@ -8,7 +8,7 @@ Because of its OOP nature, it's easy to add custom squares instead of mines.
 
 I hope anyone finds it useful.
 
-![PHP-Minesweeper screenshot](https://raw.github.com/mauserrifle/php-minesweeper/master/screenshot.png "PHP-Minesweeper screenshot")
+![PHP-Minesweeper screenshot](https://raw.github.com/emiliopedrollo/php-minesweeper/master/screenshot.png "PHP-Minesweeper screenshot")
 
 ## Requirements
 
