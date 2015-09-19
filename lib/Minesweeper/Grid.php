@@ -183,9 +183,8 @@ class Grid {
 		// Create random position
 		else
 		{
-
+			// Create random position
 			$position = $this->createRandomPosition($avoid_position);
-
 
 			// All places already filled randomly?
 			$random_full = sizeof($this->occupied_random_positions) ===
@@ -539,13 +538,21 @@ class Grid {
 
 	/**
 	 * Create a new random position
-	 *	 *
-	 * @param	array  $avoid_position    Position to avoid being generated
+	 *
+	 * TODO: Improve random position code. Make a private function get gets
+	 *       the surrounding position numbers. Use that here and also in
+	 *       `getSurroundingSquaresByPosition`. This helps for code re-use
+	 *       and get rid of complex code below. Prefer using a do-while.
+	 *
+	 * @param	array  $avoid_position    Position to avoid being generated.
+	 *                                    Also avoids being added to
+	 *                                    surroundings
 	 *
 	 * @return  array  position
 	 */
 	public function createRandomPosition($avoid_position = null)
 	{
+		// Avoid position
 		if ($avoid_position !== NULL){
 			$ax = intval($avoid_position[0]);
 			$ay = intval($avoid_position[1]);
@@ -568,7 +575,9 @@ class Grid {
 					return $position;
 				}
 			}
-		} else {
+		}
+		// Nothing to avoid
+		else {
 			return array(
 				rand(0, $this->getRows() - 1),
 				rand(0, $this->getColumns() - 1)

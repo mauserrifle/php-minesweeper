@@ -2,7 +2,7 @@
 
 This is an object-oriented PHP implementation of the game Minesweeper. It was made
 to practice test-driven development. So this minesweeper implementation is
-fully unit tested.
+unit tested.
 
 Because of its OOP nature, it's easy to add custom squares instead of mines.
 
@@ -54,3 +54,12 @@ There will be no demo from me
 ## TODO
 
 * Create tests for flagging
+
+* Create tests for not adding mines on surrounded squares of a position to
+  avoid
+
+* Improve code for position avoid regarding surrounding positions. See
+  `Grid@createRandomPosition`
+
+* Prevent infinite loop when creating a grid with more mines
+
