@@ -8,7 +8,7 @@ Because of its OOP nature, it's easy to add custom squares instead of mines.
 
 I hope anyone finds it useful.
 
-![PHP-Minesweeper screenshot](https://raw.github.com/emiliopedrollo/php-minesweeper/master/screenshot.png "PHP-Minesweeper screenshot")
+![PHP-Minesweeper screenshot](https://raw.github.com/mauserrifle/php-minesweeper/master/screenshot.png "PHP-Minesweeper screenshot")
 
 ## Requirements
 
@@ -19,7 +19,7 @@ I hope anyone finds it useful.
 
 Download the files or clone this project.
 
-    git clone https://github.com/emiliopedrollo/php-minesweeper.git
+    git clone https://github.com/mauserrifle/php-minesweeper.git
 
 Get all dependencies through composer:
 
@@ -50,3 +50,7 @@ Open <http://localhost:8000> in your browser.
 ## Demo
 
 There will be no demo from me
+
+## TODO
+
+* Create tests for flagging
