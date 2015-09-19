@@ -22,7 +22,7 @@ abstract class Square {
 	private $surrounding_squares = array();
 
 	/**
-	 * @var bool	Whether the square has been flagged as bomb or not
+	 * @var bool	Whether the square has been flagged as mine or not
 	 */
 	private $flagged = FALSE;
 
@@ -67,7 +67,7 @@ abstract class Square {
 	}
 
 	/**
-	 * Wheter the squalre has been flagged as bomb or not
+	 * Wheter the squalre has been flagged as mine or not
 	 *
 	 * @return boolean
 	 */
