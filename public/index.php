@@ -68,16 +68,34 @@ if (strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 		// Create position array
 		$reveal_position = explode(',', $square);
 
-		// Reveal
-		try
-		{
-			$grid->reveal($reveal_position);
+		if (isset($reveal_position[0]) && isset($reveal_position[1])){
+
+			$x = filter_var($reveal_position[0],FILTER_SANITIZE_NUMBER_INT);
+			$y = filter_var($reveal_position[1],FILTER_SANITIZE_NUMBER_INT);
+
+			// Reveal
+			try
+			{
+				$grid->reveal(array($x,$y));
+			}
+			// Ignore gameover and alreadyrevealed exceptions.
+			// Gameover is already checked above
+			catch ( Exception $ex) {};
+
 		}
-		// Ignore gameover and alreadyrevealed exceptions.
-		// Gameover is already checked above
-		catch ( Exception $ex) {};
+
+
 
 	}
+
+	if ($flag = Arr::get($_POST, 'flag') AND ! $grid->isGameOver()){
+
+		$flag_position = explode(',', $flag);
+
+		$grid->toggleFlag($flag_position);
+	}
+
+
 }
 
 
@@ -89,7 +107,7 @@ $grid_data = array(
 	'is_game_over'      => $grid->isGameOver(),
 	'number_of_rows'    => $grid->getRows(),
 	'number_of_columns' => $grid->getColumns(),
-	'number_of_mines'   => $grid->numberOfSquares('Minesweeper\Square\MineSquare'),
+	'number_of_mines'   => $grid->getNumberOfMines(),
 	'is_game_over'      => $grid->isGameOver(),
 	'is_won_by_player'  => $grid->isWonByPlayer()
 );
@@ -104,9 +122,17 @@ foreach ($row as $column_key => $square)
 		'row'         => $row_key,
 		'column'      => $column_key,
 
+		'is_flagged'  => $square->isFlagged() OR
+			($grid->isGameOver() AND $square->isGameOver() and $grid->isWonByPlayer()),
+
+		'is_non_game_over_flagged'
+		              => $grid->isGameOver() AND $square->isFlagged() AND !$square->isGameOver(),
+
 		// Square revealed. Game over squares are always revealed at the end
 		'is_revealed' => $square->isRevealed() OR
-			             ($grid->isGameOver() AND $square->isGameOver()),
+			($grid->isGameOver() AND $square->isGameOver()
+				AND ! $grid->isWonByPlayer() AND ! $square->isFlagged()),
+
 		'is_revealed_gameover'
 		              => $square->isRevealed() AND $square->isGameOver(),
 		'name'        => (string) $square,
@@ -119,7 +145,8 @@ foreach ($row as $column_key => $square)
 			                  NULL,
 
 		// Make square disabled when revealed or the game is over
-		'is_disabled' => $square->isRevealed() OR $grid->isGameOver()
+		'is_disabled' => $square->isFlagged() OR $square->isRevealed()
+							OR $grid->isGameOver()
 	);
 
 	// Store square data

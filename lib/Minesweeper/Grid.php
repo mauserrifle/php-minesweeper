@@ -1,10 +1,20 @@
 <?php
 namespace Minesweeper;
 
+use SebastianBergmann\RecursionContext\Exception;
+
+use Minesweeper\Exception\GameOverException;
+use Minesweeper\Exception\InvalidPositionException;
+use Minesweeper\Exception\SquareAlreadyRevealedException;
+
+use Minesweeper\Square\EmptySquare;
+use Minesweeper\Square\MineSquare;
+use Minesweeper\Square\Square;
+
 class Grid {
 
 	/**
-	 * @var  array   array containing the rows and columns (e.g. [8][8])
+	 * @var  Square[][]   array containing the rows and columns (e.g. [8][8])
 	 */
 	private $grid = array();
 
@@ -24,12 +34,25 @@ class Grid {
 	private $occupied_random_positions = array();
 
 	/**
+	 * @var int	Number of mines in game.
+	 */
+	private $number_of_mines = null;
+
+	/**
+	 * @var bool Player has already made a first move?
+	 */
+	private $game_has_initiated = false;
+
+
+
+	/**
 	 * Construct Grid with a grid size.
 	 *
 	 * @param  int  $rows
 	 * @param  int  $columns
+	 * @param  int  $mines
 	 */
-	public function __construct($rows=8, $columns=8)
+	public function __construct($rows=8, $columns=8, $mines=10)
 	{
 		// Negative number
 		if ( ! is_numeric($rows) OR $rows < 0)
@@ -43,12 +66,20 @@ class Grid {
 			$columns = 8;
 		}
 
+		// Negative number
+		if (! is_numeric($mines) OR $mines < 0)
+		{
+			$mines = 10;
+		}
+
 		// Prepare grid array
 		for ($row=0; $row < $rows; $row++)
 		for ($column=0; $column < $columns; $column++)
 		{
 			$this->grid[$row][$column] = NULL;
 		}
+
+		$this->number_of_mines = $mines;
 
 		// Reset grid
 		$this->reset();
@@ -74,7 +105,7 @@ class Grid {
 		for ($row=0; $row < $this->getRows(); $row++)
 		for ($column=0; $column < $this->getColumns(); $column++)
 		{
-			$this->addSquare(new Square\EmptySquare, array($row, $column), FALSE);
+			$this->addSquare(new EmptySquare, array($row, $column), FALSE);
 		}
 
 		// Fill surrounding squares of all squares
@@ -103,6 +134,16 @@ class Grid {
 	}
 
 	/**
+	 * Get the number of mines in the grid.
+	 *
+	 * @return  int
+	 */
+	public function getNumberOfMines()
+	{
+		return $this->number_of_mines;
+	}
+
+	/**
 	 * Add square to grid. Returns the position on success.
 	 *
 	 * @param   Square    $square
@@ -115,28 +156,35 @@ class Grid {
 	 *        (for improved performance), make sure running
 	 *        fillSurroundingSquares()
 	 *
+	 * @param	array	  $avoid_position
+	 *        Position to avoid placing mines. Only works if $position
+	 *   	  is set to null. It will also avoid place mines on surroundings
+	 * 		  of this position
 	 *
-	 * @throws  Exception\InvalidPositionException
+	 *
+	 * @throws  InvalidPositionException
 	 *
 	 * @return  int  position
 	 */
-	public function addSquare(Square\Square $square,
+	public function addSquare(Square $square,
 	                          array $position = NULL,
-	                          $fix_square_surroundings=TRUE)
+	                          $fix_square_surroundings = TRUE,
+							  $avoid_position = NULL)
 	{
 		// Use given position
 		if ($position)
 		{
 			if ( ! $this->isValidPosition($position))
 			{
-				throw new Exception\InvalidPositionException;
+				throw new InvalidPositionException;
 			}
 
 		}
 		// Create random position
 		else
 		{
-			$position = $this->createRandomPosition();
+			// Create random position
+			$position = $this->createRandomPosition($avoid_position);
 
 			// All places already filled randomly?
 			$random_full = sizeof($this->occupied_random_positions) ===
@@ -146,7 +194,7 @@ class Grid {
 			// not fill a previous random position
 			while (in_array($position, $this->occupied_random_positions) AND ! $random_full)
 			{
-				$position = $this->createRandomPosition();
+				$position = $this->createRandomPosition($avoid_position);
 			}
 
 			// Add position to occupied random positions
@@ -172,25 +220,49 @@ class Grid {
 	 * @param  array  $position  array with key 0 for row and key 1 for column
 	 *                           zero based.
 	 *
+	 * @throws InvalidPositionException
+	 *
 	 * @return Square
 	 */
 	public function getSquare(array $position)
 	{
 		if( ! $this->isValidPosition($position))
 		{
-			throw new Exception\InvalidPositionException;
+			throw new InvalidPositionException;
 		}
 
 		return $this->grid[$position[0]][$position[1]];
+	}
+
+	/**
+	* Toggle flag by position
+	*
+	* @throws InvalidPositionException
+	* @throws  SquareAlreadyRevealedException
+	*
+	* @param       array $position the array containing the position to reveal
+	*/
+	public function toggleFlag(array $position)
+	{
+		$square = $this->getSquare($position);
+
+		if ($square->isRevealed())
+		{
+			throw new SquareAlreadyRevealedException;
+		}
+
+		$square->toggleFlag();
 	}
 
 
 	/**
 	 * Reveal position
 	 *
-	 * @throws  Exception\GameOverException
-	 * @throws  Exception\InvalidPositionException
-	 * @throws  Exception\SquareAlreadyRevealedException
+	 * @param	array $position the array containing the position to reveal
+	 *
+	 * @throws  GameOverException
+	 * @throws  InvalidPositionException
+	 * @throws  SquareAlreadyRevealedException
 	 *
 	 * @return  boolean  game over
 	 */
@@ -199,28 +271,39 @@ class Grid {
 		// Game over
 		if ($this->isGameOver())
 		{
-			throw new Exception\GameOverException;
+			throw new GameOverException;
 		}
 
 		// Not a valid position
 		if ( ! $this->isValidPosition($position))
 		{
-			throw new Exception\InvalidPositionException;
+			throw new InvalidPositionException;
+		}
+
+		// First reveal, add mines
+		if ( ! $this->game_has_initiated)
+		{
+			for($i=0; $i < $this->number_of_mines; $i++)
+			{
+				$this->addSquare(new MineSquare, NULL, TRUE, $position);
+			}
+
+			$this->game_has_initiated = true;
 		}
 
 		// Get square
-		$square = $this->grid[$position[0]][$position[1]];
+		$square = $this->getSquare($position);
 
 		// Already revealed
 		if ($square->isRevealed())
 		{
-			throw new Exception\SquareAlreadyRevealedException;
+			throw new SquareAlreadyRevealedException;
 		}
 
 		// Let the square reveal
 		$this->setGameOver($square->reveal());
 
-		// Not gameover and all revealed
+		// Not game over and all revealed
 		if ( ! $this->isGameOver() AND $this->allRevealed())
 		{
 			// Player won
@@ -237,9 +320,11 @@ class Grid {
 	/**
 	 * Get position by square
 	 *
-	 * @param Square\Square $square
+	 * @param Square $square
+	 *
+	 * @return array|null Position of the square
 	 */
-	public function getPositionBySquare(Square\Square $square)
+	public function getPositionBySquare(Square $square)
 	{
 		for ($row=0; $row < $this->getRows(); $row++)
 		for ($column=0; $column < $this->getColumns(); $column++)
@@ -249,6 +334,8 @@ class Grid {
 				return array($row, $column);
 			}
 		}
+
+		return null;
 	}
 
 	/**
@@ -268,7 +355,7 @@ class Grid {
 	 *
 	 * @param   array  $position
 	 *
-	 * @throws  Exception\InvalidPositionException
+	 * @throws  InvalidPositionException
 	 *
 	 * @return  array  position
 	 */
@@ -277,7 +364,7 @@ class Grid {
 		// Not a valid position
 		if ( ! $this->isValidPosition($position))
 		{
-			throw new Exception\InvalidPositionException;
+			throw new InvalidPositionException;
 		}
 
 		// Get all surrounding squares (from top left to left)
@@ -359,6 +446,8 @@ class Grid {
 	 * Check whether a position array is valid
 	 *
 	 * @param  array  $position
+	 *
+	 * @return bool Either the position is valid or not
 	 */
 	public function isValidPosition(array $position)
 	{
@@ -450,13 +539,49 @@ class Grid {
 	/**
 	 * Create a new random position
 	 *
+	 * TODO: Improve random position code. Make a private function get gets
+	 *       the surrounding position numbers. Use that here and also in
+	 *       `getSurroundingSquaresByPosition`. This helps for code re-use
+	 *       and get rid of complex code below. Prefer using a do-while.
+	 *
+	 * @param	array  $avoid_position    Position to avoid being generated.
+	 *                                    Also avoids being added to
+	 *                                    surroundings
+	 *
 	 * @return  array  position
 	 */
-	public function createRandomPosition()
+	public function createRandomPosition($avoid_position = null)
 	{
-		return array(
+		// Avoid position
+		if ($avoid_position !== NULL){
+			$ax = intval($avoid_position[0]);
+			$ay = intval($avoid_position[1]);
+
+			$i = 0;
+
+			while (true){
+				$position = $this->createRandomPosition();
+				$x = $position[0];
+				$y = $position[1];
+
+				$x_d = abs($x - $ax);
+				$y_d = abs($y - $ay);
+
+				$mod = ($i >= 50)?0:1;
+
+				$invalid = ($x_d <= $mod) && ($y_d <= $mod);
+
+				if ( ! $invalid){
+					return $position;
+				}
+			}
+		}
+		// Nothing to avoid
+		else {
+			return array(
 				rand(0, $this->getRows() - 1),
 				rand(0, $this->getColumns() - 1)
-		);
+			);
+		}
 	}
 }
