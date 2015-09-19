@@ -58,9 +58,12 @@ abstract class Square {
 		}
 	}
 
+	/**
+	 * Toggle flag
+	 */
 	public function toggleFlag()
 	{
-		$this->flagged = !$this->flagged;
+		$this->flagged = ! $this->flagged;
 	}
 
 	/**

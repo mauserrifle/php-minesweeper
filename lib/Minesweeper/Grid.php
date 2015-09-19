@@ -225,18 +225,16 @@ class Grid {
 		return $this->grid[$position[0]][$position[1]];
 	}
 
-	public function toggleFlag(array $position){
-
-		if ($this->isGameOver())
-		{
-			throw new GameOverException;
-		}
-
-		if ( ! $this->isValidPosition($position))
-		{
-			throw new InvalidPositionException;
-		}
-
+	/**
+	* Toggle flag by position
+	*
+	* @throws InvalidPositionException
+	* @throws  SquareAlreadyRevealedException
+	*
+	* @param       array $position the array containing the position to reveal
+	*/
+	public function toggleFlag(array $position)
+	{
 		$square = $this->getSquare($position);
 
 		if ($square->isRevealed())
