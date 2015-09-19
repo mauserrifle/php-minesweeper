@@ -1,7 +1,7 @@
 # PHP-Minesweeper
 
-This is an object-oriented PHP implementation of the game Minesweeper. I made 
-this to practice test-driven development. So this minesweeper implementation is 
+This is an object-oriented PHP implementation of the game Minesweeper. I made
+this to practice test-driven development. So this minesweeper implementation is
 fully unit tested.
 
 Because of its OOP nature, it's easy to add custom squares instead of mines.
@@ -13,6 +13,7 @@ I hope anyone finds it useful.
 ## Requirements
 
 * PHP 5.3
+* Composer (https://getcomposer.org/)
 
 ## Installation details
 
@@ -22,7 +23,7 @@ Download the files or clone this project.
 
 Get all dependencies through composer:
 
-    ./composer.phar update
+    composer update
 
 ## Running unittests
 
