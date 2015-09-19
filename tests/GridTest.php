@@ -42,7 +42,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testInvalidPosition()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 		$this->assertFalse($grid->isValidPosition(array(8, 8)));
 	}
 
@@ -51,7 +51,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testAddBombToFixedPosition()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		$fixed_position = array(1, 2);
 		$position = $grid->addSquare(
@@ -71,7 +71,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testAddBombToRandomPosition()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 		$position = $grid->addSquare($mine = new Minesweeper\Square\MineSquare);
 		$this->assertSame($mine, $grid->getSquare($position));
 	}
@@ -83,7 +83,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testAddingSquareToIncorrectPosition()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 		$position = $grid->addSquare(
 			$mine = new Minesweeper\Square\MineSquare,
 			array(7, 8)
@@ -97,7 +97,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testGettingSquareFromIncorrectPosition()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 		$square = $grid->getSquare(array(7, 8));
 	}
 
@@ -106,7 +106,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testResetGrid()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Add mine
 		$position = $grid->addSquare(new Minesweeper\Square\MineSquare);
@@ -126,7 +126,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testManuallySettingGameOver()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Not game over
 		$this->assertFalse($grid->isGameOver());
@@ -143,7 +143,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testGameOverWithMine()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Add mine
 		$position = $grid->addSquare(new Minesweeper\Square\MineSquare);
@@ -165,7 +165,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testAlreadyRevealed()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Add some mines so the game is not directly over after reveal
 		$grid->addSquare(new Minesweeper\Square\MineSquare, array(5, 0));
@@ -183,7 +183,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testPositionBySquare()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 		$mine = new Minesweeper\Square\MineSquare;
 
 		$position = $grid->addSquare($mine);
@@ -206,7 +206,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testSurroundingSquares()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Get surrounding squares by position
 		$squares = $grid->getSurroundingSquaresByPosition(array(2, 3));
@@ -265,7 +265,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testRevealingEmptySurroundingSquares()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Add a horizontal line of mines
 		$grid->addSquare(new Minesweeper\Square\MineSquare, array(5, 0));
@@ -304,7 +304,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testNumberOfSquareTypes()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Add 19 mines
 		for($i=0; $i < 19; $i++)
@@ -320,7 +320,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testCreatingRandomPosition()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 		$random = $grid->createRandomPosition();
 		$this->assertTrue($grid->isValidPosition($random));
 	}
@@ -330,7 +330,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testGameOverWithEmptySquare()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Reveal some position and game over return value
 		$this->assertTrue($grid->reveal(array(2,5)));
@@ -358,7 +358,7 @@ class GridTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testWinningGameAndAllRevealed()
 	{
-		$grid = new Minesweeper\Grid(8, 8);
+		$grid = new Minesweeper\Grid(8, 8, 0);
 
 		// Add a horizontal line of mines
 		$grid->addSquare(new Minesweeper\Square\MineSquare, array(5, 0));
