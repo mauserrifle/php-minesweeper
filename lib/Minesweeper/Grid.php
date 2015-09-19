@@ -34,9 +34,9 @@ class Grid {
 	private $occupied_random_positions = array();
 
 	/**
-	 * @var int	Number of bombs in game.
+	 * @var int	Number of mines in game.
 	 */
-	private $number_of_bombs = null;
+	private $number_of_mines = null;
 
 	/**
 	 * @var bool Player has already made a first move?
@@ -50,9 +50,9 @@ class Grid {
 	 *
 	 * @param  int  $rows
 	 * @param  int  $columns
-	 * @param  int  $bombs
+	 * @param  int  $mines
 	 */
-	public function __construct($rows=8, $columns=8, $bombs=10)
+	public function __construct($rows=8, $columns=8, $mines=10)
 	{
 		// Negative number
 		if ( ! is_numeric($rows) OR $rows < 0)
@@ -67,9 +67,9 @@ class Grid {
 		}
 
 		// Negative number
-		if (! is_numeric($bombs) OR $bombs < 0)
+		if (! is_numeric($mines) OR $mines < 0)
 		{
-			$bombs = 10;
+			$mines = 10;
 		}
 
 		// Prepare grid array
@@ -79,7 +79,7 @@ class Grid {
 			$this->grid[$row][$column] = NULL;
 		}
 
-		$this->number_of_bombs = $bombs;
+		$this->number_of_mines = $mines;
 
 		// Reset grid
 		$this->reset();
@@ -134,6 +134,16 @@ class Grid {
 	}
 
 	/**
+	 * Get the number of mines in the grid.
+	 *
+	 * @return  int
+	 */
+	public function getNumberOfMines()
+	{
+		return $this->number_of_mines;
+	}
+
+	/**
 	 * Add square to grid. Returns the position on success.
 	 *
 	 * @param   Square    $square
@@ -147,8 +157,8 @@ class Grid {
 	 *        fillSurroundingSquares()
 	 *
 	 * @param	array	  $avoid_position
-	 *        Position to avoid placing bombs. Only works if $position
-	 *   	  is set to null. It will also avoid place bombs on surroundings
+	 *        Position to avoid placing mines. Only works if $position
+	 *   	  is set to null. It will also avoid place mines on surroundings
 	 * 		  of this position
 	 *
 	 *
@@ -271,13 +281,12 @@ class Grid {
 			throw new InvalidPositionException;
 		}
 
-		if ( ! $this->game_has_initiated){
-
-
-			for($i=0; $i < $this->number_of_bombs; $i++)
+		// First reveal, add mines
+		if ( ! $this->game_has_initiated)
+		{
+			for($i=0; $i < $this->number_of_mines; $i++)
 			{
-				$this->addSquare(new MineSquare(),
-					NULL, TRUE, $position);
+				$this->addSquare(new MineSquare, NULL, TRUE, $position);
 			}
 
 			$this->game_has_initiated = true;
@@ -531,10 +540,7 @@ class Grid {
 	/**
 	 * Create a new random position
 	 *	 *
-	 * @param	array	  $avoid_position
-	 *        Position to avoid placing bombs. Only works if $position
-	 *   	  is set to null. It will also avoid place bombs on surroundings
-	 * 		  of this position
+	 * @param	array  $avoid_position    Position to avoid being generated
 	 *
 	 * @return  array  position
 	 */

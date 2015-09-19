@@ -107,7 +107,7 @@ $grid_data = array(
 	'is_game_over'      => $grid->isGameOver(),
 	'number_of_rows'    => $grid->getRows(),
 	'number_of_columns' => $grid->getColumns(),
-	'number_of_mines'   => $grid->numberOfSquares('Minesweeper\Square\MineSquare'),
+	'number_of_mines'   => $grid->getNumberOfMines(),
 	'is_game_over'      => $grid->isGameOver(),
 	'is_won_by_player'  => $grid->isWonByPlayer()
 );
