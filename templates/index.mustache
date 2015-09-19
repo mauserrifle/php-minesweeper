@@ -6,59 +6,59 @@
     <title>Minesweeper</title>
     <meta name="description" content="Minesweeper">
     <meta name="viewport" content="width=device-width">
-    
+
   	<link rel="stylesheet" href="media/css/style.css">
 </head>
 <body>
 	<h1>Minesweeper</h1> <small>(by Maurice van der Star)</small>
-	
+
 	{{#grid}}
 	<div class="minesweeper">
 	<form action="" method="post">
 		<hr>
-		
-		<label>Horizontal: <input type="text" name="columns" value="{{number_of_columns}}"></label> 
+
+		<label>Horizontal: <input type="text" name="columns" value="{{number_of_columns}}"></label>
 		<label>Vertical: <input type="text" name="rows" value="{{number_of_rows}}"></label>
 		<label>Number of mines: <input type="text" name="mines" value="{{number_of_mines}}"></label>
 		<button name="reset" value="1">New field</button>
 		or preset:
-		<button name="preset" value="1">8x8x10</button> 
+		<button name="preset" value="1">8x8x10</button>
 		<button name="preset" value="2">16x16x40</button>
 		<button name="preset" value="3">16x30x99</button>
-		
+
 		<hr>
-		
+
 		<div class="minesweeper-status">
 			<img src="media/img/
 			{{#is_game_over}}
 				{{^is_won_by_player}}lost.png{{/is_won_by_player}}
 				{{#is_won_by_player}}won.png{{/is_won_by_player}}
 			{{/is_game_over}}
-			
-			{{^is_game_over}}play.png{{/is_game_over}} 
+
+			{{^is_game_over}}play.png{{/is_game_over}}
 			">
 		</div>
-		
+
 		<table class="minesweeper-grid" border="1">
 		{{#rows}}
 		<tr>
 			{{#columns}}
 			<td class="minesweeper-cell">
-				<button{{#is_disabled}} disabled="disabled"{{/is_disabled}} 
+				<button{{#is_disabled}} disabled="disabled"{{/is_disabled}}
 					class="minesweeper-square{{#is_revealed}} revealed {{name}}{{/is_revealed}} {{#is_revealed_gameover}}game-over{{/is_revealed_gameover}}"
 					name="square" value="{{row}},{{column}}">
 					<span class="minesweeper-number{{number}}">{{number}}</span>
 				</button>
 			</td>
 			{{/columns}}
-		
+
 		</tr>
 		{{/rows}}
 		</table>
 	</form>
 	</div>
 	{{/grid}}
-	
+
 </body>
 </html>
 
