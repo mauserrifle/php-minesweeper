@@ -22,6 +22,11 @@ abstract class Square {
 	private $surrounding_squares = array();
 
 	/**
+	 * @var bool	Whether the square has been flagged as bomb or not
+	 */
+	private $flagged = FALSE;
+
+	/**
 	 * Let the square reveal itself and its surroundings
 	 *
 	 * @return  boolean  Whether the game is over
@@ -30,6 +35,7 @@ abstract class Square {
 	{
 		// Set revealed
 		$this->revealed = TRUE;
+		$this->flagged = FALSE;
 
 		// Return game over
 		if ($game_over = $this->isGameOver())
@@ -50,6 +56,21 @@ abstract class Square {
 				}
 			}
 		}
+	}
+
+	public function toggleFlag()
+	{
+		$this->flagged = !$this->flagged;
+	}
+
+	/**
+	 * Wheter the squalre has been flagged as bomb or not
+	 *
+	 * @return boolean
+	 */
+	public function isFlagged()
+	{
+		return $this->flagged;
 	}
 
 	/**

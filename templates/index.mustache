@@ -45,8 +45,9 @@
 			{{#columns}}
 			<td class="minesweeper-cell">
 				<button{{#is_disabled}} disabled="disabled"{{/is_disabled}}
-					class="minesweeper-square{{#is_revealed}} revealed {{name}}{{/is_revealed}} {{#is_revealed_gameover}}game-over{{/is_revealed_gameover}}"
+					class="minesweeper-square{{#is_revealed}} revealed {{name}}{{/is_revealed}} {{#is_flagged}}flag{{/is_flagged}} {{#is_revealed_gameover}}game-over{{/is_revealed_gameover}} {{#is_non_game_over_flagged}}wrong-flag{{/is_non_game_over_flagged}}"
 					name="square" value="{{row}},{{column}}">
+					{{#is_flagged}} <div class="minesweeper-flag"></div> {{/is_flagged}}
 					<span class="minesweeper-number{{number}}">{{number}}</span>
 				</button>
 			</td>
@@ -58,6 +59,8 @@
 	</form>
 	</div>
 	{{/grid}}
+
+	<script src="media/js/events.js"></script>
 
 </body>
 </html>
